@@ -9,7 +9,9 @@ public interface ProductService {
 
     void deleteById(Long id);
 
-    Product update(Product product);
+    Product update(Long id, Product product);
+
+    Product patch(Long id, Product product);
 
     Product findById(Long id);
 

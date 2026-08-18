@@ -1,5 +1,6 @@
 package com.github.dafloresz.autopecas_erp.product;
 
+import com.github.dafloresz.autopecas_erp.category.CategoryProduct;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -37,6 +38,10 @@ public class Product implements Serializable {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

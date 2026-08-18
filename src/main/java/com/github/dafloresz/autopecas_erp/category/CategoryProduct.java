@@ -1,5 +1,6 @@
-package com.github.dafloresz.autopecas_erp.product;
+package com.github.dafloresz.autopecas_erp.category;
 
+import com.github.dafloresz.autopecas_erp.product.Product;
 import jakarta.persistence.*;
 
 import java.util.List;

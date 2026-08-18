@@ -27,12 +27,33 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public Product update(Product productToUpdate) {
-        if (!(existsById(productToUpdate.getId()))) {
-            throw new ResourceNotFoundException("Id doesn't exist");
+    public Product update(Long id, Product productToUpdate) {
+        if(!existsById(id)) {
+            throw new ResourceNotFoundException("Product with id " + id + " does not exist");
+        }
+        productToUpdate.setId(id);
+        return repository.save(productToUpdate);
+    }
+
+    @Override
+    public Product patch(Long id, Product changes) {
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
+
+        if(changes.getName() != null) {
+            product.setName(changes.getName());
+        }
+        if(changes.getPrice() != null) {
+            product.setPrice(changes.getPrice());
+        }
+        if(changes.getQuantity() != null) {
+            product.setQuantity(changes.getQuantity());
+        }
+        if (changes.getCategory() != null) {
+            product.setCategory(changes.getCategory());
         }
 
-        return repository.save(productToUpdate);
+        return repository.save(product);
     }
 
     @Override
