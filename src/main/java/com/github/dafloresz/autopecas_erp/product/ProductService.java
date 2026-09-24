@@ -1,7 +1,6 @@
 package com.github.dafloresz.autopecas_erp.product;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ProductService {
 
@@ -15,7 +14,7 @@ public interface ProductService {
 
     Product findById(Long id);
 
-    Optional<Product> findByName(String name);
+    List<Product> findByName(String name);
 
     List<Product> findByCategoryName(String category);
 

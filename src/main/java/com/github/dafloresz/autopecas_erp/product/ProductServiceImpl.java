@@ -5,7 +5,6 @@ import jakarta.persistence.EntityExistsException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -79,11 +78,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Optional<Product> findByName(String name) {
+    public List<Product> findByName(String name) {
         if (name == null) {
             throw new IllegalArgumentException("name is null");
         }
-        return repository.findByName(name);
+
+        List<Product> products = repository.findByNameContainingIgnoreCase(name);
+
+        if (products.isEmpty()) {
+            throw new ResourceNotFoundException("Product with name " + name + " not found");
+        }
+
+        return products;
     }
 
     @Override

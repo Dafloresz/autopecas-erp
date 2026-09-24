@@ -20,4 +20,25 @@ public class ProductMapper {
         return product;
 
     }
+
+    public Product toProductChange(ProductRequestDTO request, CategoryProduct category) {
+        var product = new Product();
+        if(request.name() != null) {
+            product.setName(request.name());
+        }
+
+        if(request.price() != null) {
+            product.setPrice(request.price());
+        }
+
+        if(request.quantity() != null) {
+            product.setQuantity(request.quantity());
+        }
+
+        if(category != null) {
+            product.setCategory(category);
+        }
+
+        return product;
+    }
 }
