@@ -68,12 +68,14 @@ public class CategoryProductServiceImpl implements CategoryProductService {
             throw new IllegalArgumentException("id cannot be null");
         }
 
-        if(existsById(id)) {
-            categoryRepository.deleteById(id);
-        } else {
-            throw new ResourceNotFoundException("Category Product with id " + id + " does not exist");
+        CategoryProduct category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+        if (category.getProducts() != null && !category.getProducts().isEmpty()) {
+            throw new IllegalStateException("Category cannot be deleted, existing products with this category");
         }
 
+        categoryRepository.deleteById(id);
     }
 
     @Override
