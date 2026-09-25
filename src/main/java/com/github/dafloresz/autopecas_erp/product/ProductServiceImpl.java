@@ -1,0 +1,119 @@
+package com.github.dafloresz.autopecas_erp.product;
+
+import com.github.dafloresz.autopecas_erp.exception.ResourceNotFoundException;
+import jakarta.persistence.EntityExistsException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ProductServiceImpl implements ProductService {
+
+    ProductRepository repository;
+
+    public ProductServiceImpl(ProductRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public Product save(Product product) {
+        if (existsByName(product.getName())) {
+            throw new EntityExistsException("Product with name " + product.getName() + " already exists");
+        }
+
+        return repository.save(product);
+    }
+
+
+    @Override
+    public Product update(Long id, Product productToUpdate) {
+        if(!existsById(id)) {
+            throw new ResourceNotFoundException("Product with id " + id + " does not exist");
+        }
+        productToUpdate.setId(id);
+        return repository.save(productToUpdate);
+    }
+
+    @Override
+    public Product patch(Long id, Product changes) {
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
+
+        if(changes.getName() != null) {
+            product.setName(changes.getName());
+        }
+        if(changes.getPrice() != null) {
+            product.setPrice(changes.getPrice());
+        }
+        if(changes.getQuantity() != null) {
+            product.setQuantity(changes.getQuantity());
+        }
+        if (changes.getCategory() != null) {
+            product.setCategory(changes.getCategory());
+        }
+
+        return repository.save(product);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id is null");
+        }
+
+        if (existsById(id)) {
+            repository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("Product with id " + id + " does not exist");
+
+        }
+    }
+
+    @Override
+    public Product findById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id is null");
+        }
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
+    }
+
+    @Override
+    public List<Product> findByName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("name is null");
+        }
+
+        List<Product> products = repository.findByNameContainingIgnoreCase(name);
+
+        if (products.isEmpty()) {
+            throw new ResourceNotFoundException("Product with name " + name + " not found");
+        }
+
+        return products;
+    }
+
+    @Override
+    public List<Product> findByCategoryName(String category) {
+        if (category == null) {
+            throw new IllegalArgumentException("category is null");
+        }
+        return repository.findByCategory_NameContaining(category);
+    }
+
+    @Override
+    public List<Product> findAll() {
+        return repository.findAll();
+    }
+
+    private boolean existsByName(String name) {
+        return repository.existsByName(name);
+    }
+
+
+    private boolean existsById(Long id) {
+        return repository.existsById(id);
+    }
+
+
+
+}
