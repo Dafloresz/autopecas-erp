@@ -3,11 +3,12 @@ package com.github.dafloresz.autopecas_erp.category;
 import com.github.dafloresz.autopecas_erp.product.Product;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table(name = "tb_category_product")
-public class CategoryProduct {
+public class CategoryProduct implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,15 +27,13 @@ public class CategoryProduct {
     public CategoryProduct() {
     }
 
-    public CategoryProduct(String description, String name) {
-        this.description = description;
+    public CategoryProduct(String name, String description) {
         this.name = name;
+        this.description = description;
     }
 
-    public CategoryProduct(String nome, List<Product> products, String description) {
-        this.name = nome;
-        this.products = products;
-        this.description = description;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {

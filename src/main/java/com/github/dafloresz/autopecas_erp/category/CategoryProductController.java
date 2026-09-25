@@ -1,5 +1,8 @@
 package com.github.dafloresz.autopecas_erp.category;
 
+import com.github.dafloresz.autopecas_erp.category.dto.CategoryProductRequestDTO;
+import com.github.dafloresz.autopecas_erp.category.dto.CategoryProductResponseDTO;
+import com.github.dafloresz.autopecas_erp.category.mapper.CategoryProductMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -12,50 +15,73 @@ import java.util.List;
 public class CategoryProductController {
 
     private final CategoryProductService categoryService;
+    private final CategoryProductMapper  categoryMapper;
 
-    public CategoryProductController(CategoryProductService categoryService) {
+    public CategoryProductController(CategoryProductService categoryService,  CategoryProductMapper categoryMapper) {
         this.categoryService = categoryService;
+        this.categoryMapper = categoryMapper;
     }
 
     @PostMapping
-    public ResponseEntity<CategoryProduct> create(@RequestBody CategoryProduct categoryProduct) {
+    public ResponseEntity<CategoryProductResponseDTO> create(@RequestBody CategoryProductRequestDTO categoryRequestDTO) {
+        var categoryProduct = categoryMapper.toCategoryProduct(categoryRequestDTO);
         categoryProduct = categoryService.save(categoryProduct);
+        var response = categoryMapper.toCategoryResponseDTO(categoryProduct);
+
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(categoryProduct.getId()).toUri();
-        return ResponseEntity.created(uri).body(categoryProduct);
+        return ResponseEntity.created(uri).body(response);
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         categoryService.deleteById(id);
+
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<CategoryProduct> update(@PathVariable Long id, @RequestBody CategoryProduct categoryProduct) {
-        return ResponseEntity.ok().body(categoryService.update(id, categoryProduct));
+    public ResponseEntity<CategoryProductResponseDTO> update(@PathVariable Long id, @RequestBody CategoryProductRequestDTO categoryRequestDTO) {
+        var categoryProduct = categoryMapper.toCategoryProduct(categoryRequestDTO);
+        categoryProduct = categoryService.update(id, categoryProduct);
+        var response = categoryMapper.toCategoryResponseDTO(categoryProduct);
+
+        return ResponseEntity.ok().body(response);
     }
 
     @PatchMapping(value = "/{id}")
-    public ResponseEntity<CategoryProduct> patch(@PathVariable Long id, @RequestBody CategoryProduct categoryProduct) {
-        return ResponseEntity.ok().body(categoryService.patch(id, categoryProduct));
+    public ResponseEntity<CategoryProductResponseDTO> patch(@PathVariable Long id, @RequestBody CategoryProductRequestDTO categoryRequestDTO) {
+        var  categoryProduct = categoryMapper.toCategoryChange(categoryRequestDTO);
+        categoryProduct = categoryService.patch(id, categoryProduct);
+        var response = categoryMapper.toCategoryResponseDTO(categoryProduct);
+
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<CategoryProduct> findById(@PathVariable Long id) {
-        return ResponseEntity.ok().body(categoryService.findById(id));
+    public ResponseEntity<CategoryProductResponseDTO> findById(@PathVariable Long id) {
+        var  categoryProduct = categoryService.findById(id);
+        var response = categoryMapper.toCategoryResponseDTO(categoryProduct);
+
+        return ResponseEntity.ok().body(response);
     }
 
 
     @GetMapping("/search")
-    public ResponseEntity<CategoryProduct> findByName(@RequestParam String name){
+    public ResponseEntity<CategoryProductResponseDTO> findByName(@RequestParam String name){
         return categoryService.findByName(name)
+                .map(categoryMapper::toCategoryResponseDTO)
                 .map(c -> ResponseEntity.ok().body(c))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryProduct>> findAll() {
-        return ResponseEntity.ok().body(categoryService.findAll());
+    public ResponseEntity<List<CategoryProductResponseDTO>> findAll() {
+        var response = categoryService.findAll()
+                .stream()
+                .map(categoryMapper::toCategoryResponseDTO)
+                .toList();
+
+        return ResponseEntity.ok().body(response);
     }
 
 }
