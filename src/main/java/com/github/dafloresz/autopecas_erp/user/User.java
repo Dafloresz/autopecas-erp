@@ -26,7 +26,7 @@ public abstract class User implements Serializable {
 
     @Pattern(
             regexp = "^(?=.*[a-zA-Z])[a-zA-Z0-9._-]+$",
-            message = "Use apenas letras, números, ponto, underline ou hífen, com pelo menos uma letra”"
+            message = "Use apenas letras, números, ponto, underline ou hífen, com pelo menos uma letra"
     )
     @Size(min = 6, max = 25)
     @Column(unique = true)

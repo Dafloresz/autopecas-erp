@@ -28,6 +28,8 @@ public class Employee extends User {
     private Role role;
 
     public Employee() {
+        this.active = true;
+        this.admissionDate = LocalDate.now();
     }
 
     public Employee(String name, String username, String cpf, String password, String email, String phone, Address address,
