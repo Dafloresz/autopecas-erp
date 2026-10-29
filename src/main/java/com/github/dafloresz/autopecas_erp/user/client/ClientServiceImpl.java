@@ -3,6 +3,7 @@ package com.github.dafloresz.autopecas_erp.user.client;
 import com.github.dafloresz.autopecas_erp.exception.ResourceNotFoundException;
 import com.github.dafloresz.autopecas_erp.user.UserRepository;
 import jakarta.persistence.EntityExistsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,10 +13,12 @@ public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public ClientServiceImpl(ClientRepository clientRepository, UserRepository userRepository) {
+    public ClientServiceImpl(ClientRepository clientRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.clientRepository = clientRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -24,6 +27,10 @@ public class ClientServiceImpl implements ClientService {
 
         if(client.getEmail() == null) {
             throw new IllegalArgumentException("Client email must not be null");
+        }
+
+        if(client.getPassword() == null) {
+            throw new IllegalArgumentException("Client password must not be null");
         }
 
         if(client.getCpf() != null){
@@ -42,6 +49,7 @@ public class ClientServiceImpl implements ClientService {
             throw new EntityExistsException("Client email already exists");
         }
 
+       client.setPassword(passwordEncoder.encode(client.getPassword()));
 
         return clientRepository.save(client);
 
@@ -87,7 +95,7 @@ public class ClientServiceImpl implements ClientService {
         }
 
         if(change.getPassword() != null) {
-            clientToUpdate.setPassword(change.getPassword());
+            clientToUpdate.setPassword(passwordEncoder.encode(change.getPassword()));
         }
 
         if(change.getPhone() != null) {

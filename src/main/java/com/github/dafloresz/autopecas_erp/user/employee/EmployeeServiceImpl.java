@@ -3,6 +3,7 @@ package com.github.dafloresz.autopecas_erp.user.employee;
 import com.github.dafloresz.autopecas_erp.exception.ResourceNotFoundException;
 import com.github.dafloresz.autopecas_erp.user.UserRepository;
 import jakarta.persistence.EntityExistsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,10 +15,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, UserRepository userRepository) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, UserRepository userRepository,
+                               PasswordEncoder passwordEncoder) {
         this.employeeRepository = employeeRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -29,6 +33,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         if(employee.getEmail() == null) {
             throw new IllegalArgumentException("Employee email must not be null");
+        }
+
+        if(employee.getPassword() == null) {
+            throw new IllegalArgumentException("Employee password must not be null");
         }
 
         if(userRepository.existsByCpf(employee.getCpf())) {
@@ -44,6 +52,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                 throw new EntityExistsException("Employee username " + employee.getUsername() + " already exists");
             }
         }
+
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
 
         return  employeeRepository.save(employee);
     }
@@ -93,7 +103,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         if(change.getPassword() != null) {
-            employeeToUpdate.setPassword(change.getPassword());
+            employeeToUpdate.setPassword(passwordEncoder.encode(change.getPassword()));
         }
 
         if(change.getPhone() != null) {
