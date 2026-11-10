@@ -11,10 +11,21 @@ import jakarta.persistence.Table;
 @DiscriminatorValue("CLIENT")
 public class Client extends User {
 
+    private boolean active;
+
     public Client() {
     }
 
     public Client(String name, String username, String cpf, String password, String email, String phone, Address address) {
         super(name, username, cpf, password, email, phone, address);
+        active = true;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

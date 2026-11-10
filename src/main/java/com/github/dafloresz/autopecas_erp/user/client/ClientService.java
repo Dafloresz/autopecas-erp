@@ -6,7 +6,9 @@ public interface ClientService {
     Client save(Client client);
     Client update(Long id, Client client);
     Client findById(Long id);
-    void deleteById(Long id);
+
+    void activate(Long id);
+    void deactivate(Long id);
 
     List<Client> findAll();
     List<Client> findByName(String name);

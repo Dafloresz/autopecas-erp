@@ -121,18 +121,21 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void deleteById(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Client id must not be null");
-        }
+    public void activate(Long id) {
+        var client = clientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found"));
 
-        if (clientRepository.existsById(id)) {
-            clientRepository.deleteById(id);
+        client.setActive(true);
+        clientRepository.save(client);
+    }
 
-        } else {
-            throw new ResourceNotFoundException("Client with id " + id + " not found");
-        }
+    @Override
+    public void deactivate(Long id) {
+        var client = clientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found"));
 
+        client.setActive(false);
+        clientRepository.save(client);
     }
 
     @Override

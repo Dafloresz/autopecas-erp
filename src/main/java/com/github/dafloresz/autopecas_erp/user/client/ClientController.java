@@ -58,6 +58,16 @@ public class ClientController {
         }
     }
 
+
+    @DeleteMapping(value = "/api/clients/{id}")
+    public ResponseEntity<Void>  deleteClient(@PathVariable("id") Long id) {
+        if(verifyOwnership(id)){
+           clientService.deactivate(id);
+        } else throw new AccessDeniedException("Access denied");
+
+        return ResponseEntity.noContent().build();
+    }
+
     private boolean verifyOwnership(Long id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedEmail = authentication.getName();
