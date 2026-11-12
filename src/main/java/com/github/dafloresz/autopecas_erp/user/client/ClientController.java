@@ -7,9 +7,9 @@ import com.github.dafloresz.autopecas_erp.user.client.mapper.ClientMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -56,6 +56,14 @@ public class ClientController {
         } else {
             throw new AccessDeniedException("Access denied");
         }
+    }
+
+    @GetMapping(value = "/api/clients/search")
+    public ResponseEntity<ClientResponseDTO>  findByEmail(@RequestParam("email") String email){
+        Client client = clientService.findByEmail(email);
+        ClientResponseDTO response =  clientMapper.toClientResponseDTO(client);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 

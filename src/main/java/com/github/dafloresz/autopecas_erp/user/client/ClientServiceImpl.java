@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClientServiceImpl implements ClientService {
@@ -139,8 +140,13 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<Client> findAll() {
-        return clientRepository.findAll();
+    public Client findByEmail(String email) {
+        if (email == null) {
+            throw new IllegalArgumentException("Client email must not be null");
+        }
+
+        return clientRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Client with email " + email + " not found"));
     }
 
     @Override

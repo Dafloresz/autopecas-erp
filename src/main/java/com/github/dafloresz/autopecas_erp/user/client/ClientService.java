@@ -1,6 +1,7 @@
 package com.github.dafloresz.autopecas_erp.user.client;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ClientService {
     Client save(Client client);
@@ -10,7 +11,7 @@ public interface ClientService {
     void activate(Long id);
     void deactivate(Long id);
 
-    List<Client> findAll();
+    Client findByEmail(String email);
     List<Client> findByName(String name);
 
 
