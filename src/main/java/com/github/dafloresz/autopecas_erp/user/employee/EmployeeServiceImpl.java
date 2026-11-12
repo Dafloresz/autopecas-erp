@@ -3,6 +3,7 @@ package com.github.dafloresz.autopecas_erp.user.employee;
 import com.github.dafloresz.autopecas_erp.exception.ResourceNotFoundException;
 import com.github.dafloresz.autopecas_erp.user.UserRepository;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -174,30 +175,22 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> findByName(String name) {
-        if(name == null) {
-            throw new IllegalArgumentException("Employee name must not be null");
-        }
+    public List<Employee> searchByNameOrSector(String name, Sector sector) {
+        List<Employee> employees = employeeRepository.searchByNameOrSector(name, sector);
 
-        List<Employee> employees = employeeRepository.findByNameContainingIgnoreCase(name);
+        if(employees.isEmpty()) {
+            StringBuilder criteria = new StringBuilder();
+            if(sector != null) {
+                criteria.append("sector: ").append(sector);
+            }
 
-        if(employees.isEmpty()){
-            throw new ResourceNotFoundException("Employee with name " + name + " does not exist");
-        }
-
-        return employees;
-    }
-
-    @Override
-    public List<Employee> findAllBySector(Sector sector) {
-        if(sector == null) {
-            throw new IllegalArgumentException("Employee sector must not be null");
-        }
-
-        List<Employee> employees = employeeRepository.findAllBySector(sector);
-
-        if(employees.isEmpty()){
-            throw new ResourceNotFoundException("No employees found in sector: " + sector.name());
+            if(name != null) {
+                if(!criteria.isEmpty()) {
+                    criteria.append(" and ");
+                }
+                criteria.append("name: ").append(name);
+            }
+            throw new ResourceNotFoundException("No employees found for criteria: " + criteria);
         }
 
         return employees;

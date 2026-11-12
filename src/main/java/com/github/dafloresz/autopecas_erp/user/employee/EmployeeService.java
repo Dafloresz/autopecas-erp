@@ -12,8 +12,7 @@ public interface EmployeeService {
     void deactivateEmployee(Long id);
 
     List<Employee> findAll(Boolean active);
-    List<Employee> findAllBySector(Sector sector);
-    List<Employee> findByName(String name);
+    List<Employee> searchByNameOrSector(String name, Sector sector);
     List<Employee> findByAdmissionDateBetween(LocalDate startDate, LocalDate endDate);
 
 }

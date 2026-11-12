@@ -37,12 +37,14 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth ->
                 auth
                         .requestMatchers(HttpMethod.POST, "/api/employees").hasAnyRole("MANAGER", "ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/employees/{id}").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/employees/{id}").hasAnyRole("MANAGER", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/employees/{id}/activate").hasAnyRole("MANAGER", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/employees/{id}/deactivate").hasAnyRole("MANAGER",  "ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/api/employees/directory").hasAnyRole("INTERN", "MANAGER", "ADMIN", "EMPLOYEE")
                         .requestMatchers(HttpMethod.GET, "/api/employees").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/employees/{id}").hasAnyRole("MANAGER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/employees/search").hasAnyRole("MANAGER", "ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/api/products").hasAnyRole("INTERN", "MANAGER", "ADMIN", "EMPLOYEE")
                         .requestMatchers(HttpMethod.PUT, "/api/products/{id}").hasAnyRole("INTERN", "MANAGER", "ADMIN", "EMPLOYEE")
@@ -53,6 +55,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/categories/{id}").hasAnyRole("INTERN", "MANAGER", "ADMIN", "EMPLOYEE")
                         .requestMatchers(HttpMethod.PATCH, "/api/categories/{id}").hasAnyRole("INTERN", "MANAGER", "ADMIN", "EMPLOYEE")
                         .requestMatchers(HttpMethod.DELETE, "/api/categories/{id}").hasAnyRole("EMPLOYEE", "ADMIN", "MANAGER")
+
+                        .requestMatchers(HttpMethod.GET, "/api/clients/search").hasAnyRole("INTERN", "MANAGER", "ADMIN", "EMPLOYEE")
 
                         .requestMatchers(HttpMethod.PATCH, "/api/clients/{id}").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/clients/{id}").authenticated()
